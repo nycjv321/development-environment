@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  vars:
+    node_major_revision: 6
+  tasks:
+  - name: setup nodesource repository
+    shell: "curl --silent --location https://rpm.nodesource.com/setup_{{ node_major_revision }}.x | bash -"
+    become: true
+    become_user: root
+  - name: install node
+    dnf: name=nodejs state=latest
+    become: true
+    become_user: root
