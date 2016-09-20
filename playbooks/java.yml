@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  vars:
+    java_version: 8u101
+    java_build_version: b13
+  tasks:
+  - stat: path=/tmp/jdk-linux-{{ java_version }}-{{ java_build_version }}-x64.rpm
+    register: java_rpm_downloaded
+  - name: download java
+    shell: "wget --no-cookies --no-check-certificate --header \"Cookie: oraclelicense=accept-securebackup-cookie\" \"http://download.oracle.com/otn-pub/java/jdk/{{ java_version }}-{{ java_build_version }}/jdk-{{ java_version }}-linux-x64.rpm\" -O /tmp/jdk-linux-{{ java_version }}-{{ java_build_version }}-x64.rpm"
+    when: java_rpm_downloaded.stat.exists == False 
+  - name: Install Java
+    dnf: name=/tmp/jdk-linux-{{ java_version }}-{{ java_build_version }}-x64.rpm state=present
+    become: true
+    become_user: root
+  - name: set java_home
+    lineinfile: dest=/etc/environment state=present line="JAVA_HOME=/usr/java/latest"
+    become: true
+    become_user: root
+
+
+
