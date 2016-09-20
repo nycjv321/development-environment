@@ -14,7 +14,7 @@
     become: true
     become_user: root
   - name: download datagrip
-    get_url:
+    get_url: 
       url: https://download-cf.jetbrains.com/datagrip/datagrip-{{ datagrip_version }}.tar.gz
       dest: /opt/jetbrains/downloads/DataGrip-{{ datagrip_version}}.tar.gz
     when: datagrip_downloaded.stat.exists == False
