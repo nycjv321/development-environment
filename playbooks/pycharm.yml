@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  vars:
+    pycharm_version: 2016.2.3
+  tasks:
+  - stat: path=/opt/jetbrains/downloads/pycharm-professional-{{ pycharm_version }}.tar.gz
+    register: pycharm_downloaded
+  - name: Create /opt/jetbrains/downloads/
+    file: path=/opt/jetbrains/downloads/ state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: Create /opt/jetbrains/pycharm/
+    file: path=/opt/jetbrains/pycharm/ state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: download pycharm
+    get_url:
+      url: https://download.jetbrains.com/python/pycharm-professional-{{ pycharm_version }}.tar.gz
+      dest: /opt/jetbrains/downloads/pycharm-professional-{{ pycharm_version }}.tar.gz
+    when: pycharm_downloaded.stat.exists == False
+  - name: extract pycharm
+    shell: "tar xzf /opt/jetbrains/downloads/pycharm-professional-{{ pycharm_version }}.tar.gz -C /opt/jetbrains/pycharm --strip-components=1"
+    become: true
+    become_user: root
+  - name: Create symlink for pycharm
+    file: src=/opt/jetbrains/pycharm/bin/pycharm.sh dest=/usr/local/bin/pycharm state=link
+    become: true
+    become_user: root
+
