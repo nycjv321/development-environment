@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  tasks:
+  - name: create docker repo 
+    copy: src=./../files/docker.repo dest=/etc/yum.repos.d/docker.repo
+    become: true
+    become_user: root
+  - name: install the latest docker engine
+    dnf: name=docker-engine state=latest
+    become: true
+    become_user: root
+  - name: enable docker service
+    service: name=docker enabled=yes
+    become: true
+    become_user: root
+  - name: start docker service
+    service: name=docker state=started
+    become: true
+    become_user: root
+  - group: name=docker state=present
+  - name: Adding existing user '{{ item }}' to docker group
+    user: name='{{ item }}' groups=docker append=yes
+    with_items:
+      - fedora
+    become: true
+    become_user: root
+
+
+
+
