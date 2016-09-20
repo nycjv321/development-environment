@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  tasks:
+  - name: create google chrome repo 
+    copy: src=./../files/google-chrome.repo dest=/etc/yum.repos.d/google-chrome.repo
+    become: true
+    become_user: root
+  - name: install the latest google chrome
+    dnf: name=google-chrome-stable state=latest
+    become: true
+    become_user: root
+
