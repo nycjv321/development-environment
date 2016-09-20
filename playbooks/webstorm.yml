@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  vars:
+    webstorm_version: 2016.2.3
+  tasks:
+  - stat: path=/opt/jetbrains/downloads/WebStorm-{{ webstorm_version}}.tar.gz
+    register: webstorm_downloaded
+  - name: Create /opt/jetbrains/downloads/
+    file: path=/opt/jetbrains/downloads/ state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: Create /opt/jetbrains/webstorm/
+    file: path=/opt/jetbrains/webstorm/ state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: download webstorm
+    get_url:
+      url: https://download-cf.jetbrains.com/webstorm/WebStorm-{{ webstorm_version }}.tar.gz
+      dest: /opt/jetbrains/downloads/WebStorm-{{ webstorm_version}}.tar.gz
+    when: webstorm_downloaded.stat.exists == False
+  - name: extract webstorm
+    shell: "tar xzf /opt/jetbrains/downloads/WebStorm-{{ webstorm_version}}.tar.gz -C /opt/jetbrains/webstorm --strip-components=1"
+    become: true
+    become_user: root
+  - name: Create symlink for webstorm
+    file: src=/opt/jetbrains/webstorm/bin/webstorm.sh dest=/usr/local/bin/webstorm state=link
+    become: true
+    become_user: root
+
