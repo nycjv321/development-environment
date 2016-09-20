@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  vars:
+    gitkraken_version: 1.6.1
+  tasks:
+  - name: download gitkraken
+    get_url:
+      url: https://release.gitkraken.com/linux/gitkraken-amd64.tar.gz
+      dest: /tmp/gitkraken-{{gitkraken_version}}.linux.tar.gz
+  - name: Create /opt/axosoft
+    file: path=/opt/axosoft state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - unarchive: src=/tmp/gitkraken-{{gitkraken_version}}.linux.tar.gz dest=/opt/axosoft  
+  - name: Create symlink for GitKraken
+    file: src=/opt/axosoft/GitKraken/gitkraken dest=/usr/local/bin/gitkraken state=link
+    become: true
+    become_user: root
+
