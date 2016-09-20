@@ -3,15 +3,20 @@
   vars:
     golang_version: 1.7.1
   tasks:
+  - stat: path=/tmp/go{{golang_version}}.linux-amd64.tar.gz
+    register: golang_downloaded
   - name: download go
     get_url:
       url: https://storage.googleapis.com/golang/go{{golang_version}}.linux-amd64.tar.gz
       dest: /tmp/go{{golang_version}}.linux-amd64.tar.gz
+    when: golang_downloaded.stat.exists == False
   - name: Create /usr/local/go
     file: path=/usr/local/go state=directory owner=fedora group=fedora mode=0755
     become: true
     become_user: root
-  - unarchive: src=/tmp/go{{golang_version}}.linux-amd64.tar.gz dest=/usr/local
+  - name: extract golang
+    unarchive: src=/tmp/go{{golang_version}}.linux-amd64.tar.gz dest=/usr/local
+    when: golang_downloaded.stat.exists == False
   - name: Add go to path
     lineinfile: dest=/etc/profile state=present line="export PATH=$PATH:/usr/local/go/bin"
     become: true
