@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  vars:
+    node_major_revision: 6
+  tasks:
+  - name: install atom
+    dnf: name=https://atom-installer.github.com/v1.10.2/atom.x86_64.rpm state=present
+    become: true
+    become_user: root
+

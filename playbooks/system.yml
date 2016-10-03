@@ -13,9 +13,6 @@
       - wget
       - git
       - libselinux-python
-    become: true
-    become_user: root
-  - name: install atom
-    dnf: name=https://atom-installer.github.com/v1.10.2/atom.x86_64.rpm state=present
+      - python2-dnf
     become: true
     become_user: root
