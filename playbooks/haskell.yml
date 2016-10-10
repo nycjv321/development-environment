@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  tasks:
+  - name: install Haskell Platform
+    dnf: name=haskell-platform state=latest
+    become: true
+    become_user: root
