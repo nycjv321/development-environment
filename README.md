@@ -1,6 +1,6 @@
 # nycjv321's Development Environment a la carte
 
-This repository contains playbooks automating various components of my development enviroment built on top of Fedora 24.
+This repository contains playbooks automating various components of my development enviroment built on top of Fedora
 
 ## General Apps
 * Atom
@@ -26,3 +26,15 @@ This repository contains playbooks automating various components of my developme
 * WebStorm
 * PyCharm
 * CLion
+
+## Usage
+
+Configure your hosts in `/etc/ansible/hosts`. The playbooks are configured to run against localhost and "vms".
+So something like:
+
+	[vms]
+        $host_ip ansible_user=$ansible_user
+
+Run a playbook:
+
+	ansible-playbook playbook.yml -k --extra-vars='ansible_become_pass=$ansible_user_pass'

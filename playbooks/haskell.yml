@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: vms
   tasks:
   - name: install Haskell Platform
     dnf: name=haskell-platform state=latest
