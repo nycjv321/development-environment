@@ -1,0 +1,36 @@
+---
+- hosts: vms
+  vars:
+    gradle_version: 3.4.1
+  tasks:
+  - name: Create /opt/apache
+    file: path=/opt/apache state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: Create /opt/apache/downloads
+    file: path=/opt/apache/downloads state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - stat: path=/opt/apache/downloads/gradle-{{ gradle_version }}-all.zip
+    register: gradle_downloaded
+  - name: download gradle
+    get_url:
+      url: https://services.gradle.org/distributions/gradle-{{ gradle_version }}-all.zip
+      dest: /opt/apache/downloads/gradle-{{ gradle_version }}-all.zip
+    become: true
+    become_user: root
+    when: gradle_downloaded.stat.exists == False
+  - name: delete existing gradle install
+    file:
+      state: absent
+      path: "/opt/apache/gradle/gradle-{{ gradle_version }}"
+    become: true
+    become_user: root
+  - name: extract gradle 
+    shell: unzip /opt/apache/downloads/gradle-{{ gradle_version }}-all.zip -d /opt/apache/gradle
+    become: true
+    become_user: root
+  - name: set gradle_home
+    lineinfile: dest=/etc/profile state=present line="PATH=$PATH:/opt/apache/gradle/gradle-{{ gradle_version }}/bin"
+    become: true
+    become_user: root
