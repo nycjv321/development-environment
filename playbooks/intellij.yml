@@ -1,7 +1,7 @@
 ---
-- hosts: localhost
+- hosts: vms
   vars:
-    intellij_version: 2016.2.4
+    intellij_version: 2017.1
   tasks:
   - stat: path=/opt/jetbrains/downloads/ideaIU-{{ intellij_version }}.tar.gz
     register: idea_downloaded
