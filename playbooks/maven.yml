@@ -1,0 +1,41 @@
+---
+- hosts: vms
+  vars:
+    maven_version: 3.3.9
+    maven_major_version: 3
+  tasks:
+  - name: Create /opt/apache
+    file: path=/opt/apache state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: Create /opt/apache/downloads
+    file: path=/opt/apache/downloads state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - name: Create /opt/apache/maven
+    file: path=/opt/apache/maven state=directory owner=fedora group=fedora mode=0755
+    become: true
+    become_user: root
+  - stat: path=/opt/apache/downloads/maven-{{ maven_version }}.bin.tar.gz
+    register: maven_downloaded
+  - name: download maven
+    get_url:
+      url: http://www-eu.apache.org/dist/maven/maven-{{ maven_major_version }}/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz
+      dest: /opt/apache/downloads/maven-{{ maven_version }}.bin.tar.gz
+    become: true
+    become_user: root
+    when: maven_downloaded.stat.exists == False
+  - name: delete existing maven install
+    file:
+      state: absent
+      path: "/opt/apache/maven/maven-{{ maven_version }}"
+    become: true
+    become_user: root
+  - name: extract maven 
+    shell: tar xzf /opt/apache/downloads/maven-{{ maven_version }}.bin.tar.gz -C /opt/apache/maven
+    become: true
+    become_user: root
+  - name: set maven_home
+    lineinfile: dest=/etc/profile state=present line="PATH=$PATH:/opt/apache/maven/apache-maven-{{ maven_version }}/bin"
+    become: true
+    become_user: root
